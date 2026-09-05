@@ -1,0 +1,11 @@
+﻿git : Submodule 'platform_frameworks_libs_systemui' 
+(https://github.com/LawnchairLauncher/platform_frameworks_libs_systemui) registered for path 
+'platform_frameworks_libs_systemui'
+At line:1 char:1
++ git submodule update --init --recursive 2>&1 | Out-File -Encoding utf ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Submodule 'plat..._libs_systemui':String) [], RemoteEx 
+   ception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ e12acf0978875fc4adcebf46207b766106ffc92b platform_frameworks_libs_systemui (heads/16-dev)
