@@ -17,6 +17,10 @@ jobs:
           java-version: 21
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Make gradlew executable
+        run: chmod +x gradlew
       - name: Write sign info
         run: |
           if [ ! -z "${{ secrets.KEYSTORE }}" ]; then
@@ -27,11 +31,12 @@ jobs:
             echo ${{ secrets.KEYSTORE }} | base64 --decode > ${{ github.workspace }}/key.jks
           fi
       - name: Build release APK
-        run: ./gradlew assembleLawnWithQuickstepGithubRelease bundleLawnWithQuickstepPlayRelease
+        run: ./gradlew assembleLawnWithQuickstepGithubRelease bundleLawnWithQuickstepPlayRelease --no-daemon --max-workers=2
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Release APK
           path: build/outputs/*
+
 
 

@@ -36,6 +36,10 @@ jobs:
           java-version: 21
       - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Make gradlew executable
+        run: chmod +x gradlew
       - name: Write sign info
         id: sign-release-apk
         run: |
@@ -47,7 +51,7 @@ jobs:
             echo ${{ secrets.KEYSTORE }} | base64 --decode > ${{ github.workspace }}/key.jks
           fi
       - name: Build release APK
-        run: ./gradlew assembleLawnWithQuickstepGithubRelease
+        run: ./gradlew assembleLawnWithQuickstepGithubRelease --no-daemon --max-workers=2
       - name: Rename artifact
         env:
           ARTIFACT_NAME: ${{ github.event.inputs.artifactName }}
@@ -108,4 +112,5 @@ jobs:
           ARTIFACT_DIRECTORY: artifacts/release-apk
           TELEGRAM_NEWS_CHANNEL_ID: ${{ secrets.TELEGRAM_NEWS_CHANNEL_ID }}
           ACTION: update_announcement
+
 
