@@ -191,7 +191,7 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary
                     )
                     androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     app.lawnchair.ui.preferences.components.controls.SwitchPreference(
                         label = "AI Detoxi Launcher Icon",
                         description = "Enable Cloudflare Workers AI icon generation for clean minimalist drawer apps.",
@@ -239,7 +239,6 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                     }
                 }
             }
-            )
             SwitchPreference(
                 adapter = wrapAdaptiveIcons,
                 label = stringResource(id = R.string.auto_adaptive_icons_label),
