@@ -19,9 +19,14 @@ package app.lawnchair.ai
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import kotlinx.coroutines.*
-import okhttp3.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File

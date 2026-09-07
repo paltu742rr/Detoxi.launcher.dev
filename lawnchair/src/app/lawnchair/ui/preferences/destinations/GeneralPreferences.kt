@@ -162,83 +162,83 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                 label = stringResource(id = R.string.icon_shape_label),
                 destination = GeneralIconShape(ShapeRoute.APP_SHAPE),
                 subtitle = iconShapeSubtitle,
-
-        PreferenceGroup(
-            heading = "AI Detoxi Launcher Icon (Cloudflare Workers AI)",
-            description = "Automatically transforms icons into a clean minimalist style using Cloudflare Workers AI with 50 RPM batch rate-limit queueing.",
-        ) {
-            val aiManager = remember { app.lawnchair.ai.AiDetoxiManager.getInstance(context) }
-            var isAiEnabled by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.isEnabled) }
-            var endpoint by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.endpointUrl) }
-            var apiKey by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.apiKey) }
-            val progress by aiManager.progressState.collectAsStateWithLifecycle()
-
-            androidx.compose.foundation.layout.Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .androidx.compose.ui.semantics.semantics(mergeDescendants = true) {}
-                    .androidx.compose.ui.draw.clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
-                    .androidx.compose.ui.graphics.graphicsLayer {}
-                    .padding(16.dp)
-            ) {
-                androidx.compose.material3.Text(
-                    text = "AI-Powered Minimalist Icon Engine",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary
-                )
-                androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
-                
-                app.lawnchair.ui.preferences.components.controls.SwitchPreference(
-                    label = "AI Detoxi Launcher Icon",
-                    description = "Enable Cloudflare Workers AI icon generation for clean minimalist drawer apps.",
-                    checked = isAiEnabled,
-                    onCheckedChange = {
-                        isAiEnabled = it
-                        aiManager.isEnabled = it
-                    }
-                )
-
-                if (isAiEnabled) {
-                    androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
-                    androidx.compose.material3.OutlinedTextField(
-                        value = endpoint,
-                        onValueChange = {
-                            endpoint = it
-                            aiManager.endpointUrl = it
-                        },
-                        label = { androidx.compose.material3.Text("Cloudflare Endpoint URL") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
-                    androidx.compose.material3.OutlinedTextField(
-                        value = apiKey,
-                        onValueChange = {
-                            apiKey = it
-                            aiManager.apiKey = it
-                        },
-                        label = { androidx.compose.material3.Text("Cloudflare API Token") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    if (progress.second > 0) {
-                        androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
-                        androidx.compose.material3.LinearProgressIndicator(
-                            progress = { progress.first.toFloat() / progress.second.toFloat() },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        androidx.compose.foundation.Spacer(modifier = Modifier.height(4.dp))
-                        androidx.compose.material3.Text(
-                            text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
-                            style = androidx.compose.material3.MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        }
-
                 endWidget = {
                     IconShapePreview(iconShape = iconShapeAdapter.state.value)
                 },
+            )
+
+            PreferenceGroup(
+                heading = "AI Detoxi Launcher Icon (Cloudflare Workers AI)",
+                description = "Automatically transforms icons into a clean minimalist style using Cloudflare Workers AI with 50 RPM batch rate-limit queueing.",
+            ) {
+                val aiManager = remember { app.lawnchair.ai.AiDetoxiManager.getInstance(context) }
+                var isAiEnabled by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.isEnabled) }
+                var endpoint by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.endpointUrl) }
+                var apiKey by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.apiKey) }
+                val progress by aiManager.progressState.collectAsStateWithLifecycle()
+
+                androidx.compose.foundation.layout.Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .androidx.compose.ui.semantics.semantics(mergeDescendants = true) {}
+                        .androidx.compose.ui.draw.clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                        .androidx.compose.ui.graphics.graphicsLayer {}
+                        .padding(16.dp)
+                ) {
+                    androidx.compose.material3.Text(
+                        text = "AI-Powered Minimalist Icon Engine",
+                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                    )
+                    androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
+                    
+                    app.lawnchair.ui.preferences.components.controls.SwitchPreference(
+                        label = "AI Detoxi Launcher Icon",
+                        description = "Enable Cloudflare Workers AI icon generation for clean minimalist drawer apps.",
+                        checked = isAiEnabled,
+                        onCheckedChange = {
+                            isAiEnabled = it
+                            aiManager.isEnabled = it
+                        }
+                    )
+
+                    if (isAiEnabled) {
+                        androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
+                        androidx.compose.material3.OutlinedTextField(
+                            value = endpoint,
+                            onValueChange = {
+                                endpoint = it
+                                aiManager.endpointUrl = it
+                            },
+                            label = { androidx.compose.material3.Text("Cloudflare Endpoint URL") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
+                        androidx.compose.material3.OutlinedTextField(
+                            value = apiKey,
+                            onValueChange = {
+                                apiKey = it
+                                aiManager.apiKey = it
+                            },
+                            label = { androidx.compose.material3.Text("Cloudflare API Token") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        if (progress.second > 0) {
+                            androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
+                            androidx.compose.material3.LinearProgressIndicator(
+                                progress = { progress.first.toFloat() / progress.second.toFloat() },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            androidx.compose.foundation.Spacer(modifier = Modifier.height(4.dp))
+                            androidx.compose.material3.Text(
+                                text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
+                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+            }
             )
             SwitchPreference(
                 adapter = wrapAdaptiveIcons,
