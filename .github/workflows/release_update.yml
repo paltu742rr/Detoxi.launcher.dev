@@ -35,11 +35,9 @@ jobs:
           distribution: 'zulu'
           java-version: 21
       - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-home-cache-cleanup: true
       - name: Make gradlew executable
         run: chmod +x gradlew
+      - uses: gradle/actions/setup-gradle@v3
       - name: Write sign info
         id: sign-release-apk
         run: |
