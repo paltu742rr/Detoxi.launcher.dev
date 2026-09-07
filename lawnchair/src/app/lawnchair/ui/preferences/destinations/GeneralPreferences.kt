@@ -22,6 +22,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import app.lawnchair.ai.AiDetoxiManager
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.unit.dp
@@ -176,28 +186,25 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                 heading = "AI Detoxi Launcher Icon (Cloudflare Workers AI)",
                 description = "Automatically transforms icons into a clean minimalist style using Cloudflare Workers AI with 50 RPM batch rate-limit queueing.",
             ) {
-                val aiManager = remember { app.lawnchair.ai.AiDetoxiManager.getInstance(context) }
-                var isAiEnabled by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.isEnabled) }
-                var endpoint by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.endpointUrl) }
-                var apiKey by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(aiManager.apiKey) }
+                val aiManager = remember { AiDetoxiManager.getInstance(context) }
+                var isAiEnabled by mutableStateOf(aiManager.isEnabled)
+                var endpoint by mutableStateOf(aiManager.endpointUrl)
+                var apiKey by mutableStateOf(aiManager.apiKey)
                 val progress by aiManager.progressState.collectAsStateWithLifecycle()
 
                 androidx.compose.foundation.layout.Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .androidx.compose.ui.semantics.semantics(mergeDescendants = true) {}
-                        .androidx.compose.ui.draw.clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
-                        .androidx.compose.ui.graphics.graphicsLayer {}
                         .padding(16.dp)
                 ) {
-                    androidx.compose.material3.Text(
+                    Text(
                         text = "AI-Powered Minimalist Icon Engine",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    app.lawnchair.ui.preferences.components.controls.SwitchPreference(
+                    SwitchPreference(
                         label = "AI Detoxi Launcher Icon",
                         description = "Enable Cloudflare Workers AI icon generation for clean minimalist drawer apps.",
                         checked = isAiEnabled,
@@ -209,36 +216,36 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
 
                     if (isAiEnabled) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        androidx.compose.material3.OutlinedTextField(
+                        OutlinedTextField(
                             value = endpoint,
                             onValueChange = {
                                 endpoint = it
                                 aiManager.endpointUrl = it
                             },
-                            label = { androidx.compose.material3.Text("Cloudflare Endpoint URL") },
+                            label = { Text("Cloudflare Endpoint URL") },
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        androidx.compose.material3.OutlinedTextField(
+                        OutlinedTextField(
                             value = apiKey,
                             onValueChange = {
                                 apiKey = it
                                 aiManager.apiKey = it
                             },
-                            label = { androidx.compose.material3.Text("Cloudflare API Token") },
+                            label = { Text("Cloudflare API Token") },
                             modifier = Modifier.fillMaxWidth()
                         )
 
                         if (progress.second > 0) {
                             Spacer(modifier = Modifier.height(12.dp))
-                            androidx.compose.material3.LinearProgressIndicator(
+                            LinearProgressIndicator(
                                 progress = { progress.first.toFloat() / progress.second.toFloat() },
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(4.dp))
-                            androidx.compose.material3.Text(
+                            Text(
                                 text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
-                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
