@@ -17,6 +17,8 @@
 package app.lawnchair.ui.preferences.destinations
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Spacer
@@ -206,7 +208,7 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                     )
 
                     if (isAiEnabled) {
-                        androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         androidx.compose.material3.OutlinedTextField(
                             value = endpoint,
                             onValueChange = {
@@ -216,7 +218,7 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                             label = { androidx.compose.material3.Text("Cloudflare Endpoint URL") },
                             modifier = Modifier.fillMaxWidth()
                         )
-                        androidx.compose.foundation.Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         androidx.compose.material3.OutlinedTextField(
                             value = apiKey,
                             onValueChange = {
@@ -228,12 +230,12 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                         )
 
                         if (progress.second > 0) {
-                            androidx.compose.foundation.Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
                             androidx.compose.material3.LinearProgressIndicator(
                                 progress = { progress.first.toFloat() / progress.second.toFloat() },
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            androidx.compose.foundation.Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
                             androidx.compose.material3.Text(
                                 text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
                                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall
