@@ -147,24 +147,6 @@ public class IconCache extends BaseIconCache {
 
     public IconCache(
         @ApplicationContext Context context,
-
-    // AI Detoxi Launcher Queue helper method
-    public void processIconWithAiDetoxiIfNeeded(String packageName, android.graphics.Bitmap iconBitmap) {
-        if (!isAiDetoxiEnabled() || iconBitmap == null) return;
-        try {
-            app.lawnchair.ai.AiDetoxiManager.getInstance(mContext).queueIcon(packageName, iconBitmap);
-        } catch (Exception e) {
-            android.util.Log.e(TAG, "Failed to queue icon for AI Detoxi", e);
-        }
-    }
-
-
-    // --- AI Detoxi Launcher Integration ---
-    public boolean isAiDetoxiEnabled() {
-        return mContext.getSharedPreferences("ai_detoxi_prefs", Context.MODE_PRIVATE)
-                .getBoolean("ai_detoxi_enabled", false);
-    }
-
         InvariantDeviceProfile idp,
         @Nullable @Named("ICONS_DB") String dbFileName,
         UserCache userCache,
@@ -186,6 +168,22 @@ public class IconCache extends BaseIconCache {
         mCancelledTask.cancel();
 
         lifecycle.addCloseable(this::close);
+    }
+
+    // AI Detoxi Launcher Queue helper method
+    public void processIconWithAiDetoxiIfNeeded(String packageName, android.graphics.Bitmap iconBitmap) {
+        if (!isAiDetoxiEnabled() || iconBitmap == null) return;
+        try {
+            app.lawnchair.ai.AiDetoxiManager.getInstance(mContext).queueIcon(packageName, iconBitmap);
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to queue icon for AI Detoxi", e);
+        }
+    }
+
+    // --- AI Detoxi Launcher Integration ---
+    public boolean isAiDetoxiEnabled() {
+        return mContext.getSharedPreferences("ai_detoxi_prefs", Context.MODE_PRIVATE)
+                .getBoolean("ai_detoxi_enabled", false);
     }
 
     @Override
