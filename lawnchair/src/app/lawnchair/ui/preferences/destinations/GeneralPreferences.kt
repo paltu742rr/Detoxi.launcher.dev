@@ -187,9 +187,9 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                 description = "Automatically transforms icons into a clean minimalist style using Cloudflare Workers AI with 50 RPM batch rate-limit queueing.",
             ) {
                 val aiManager = remember { AiDetoxiManager.getInstance(context) }
-                var isAiEnabled by mutableStateOf(aiManager.isEnabled)
-                var endpoint by mutableStateOf(aiManager.endpointUrl)
-                var apiKey by mutableStateOf(aiManager.apiKey)
+                var isAiEnabled by remember { mutableStateOf(aiManager.isEnabled) }
+                var endpoint by remember { mutableStateOf(aiManager.endpointUrl) }
+                var apiKey by remember { mutableStateOf(aiManager.apiKey) }
                 val progress by aiManager.progressState.collectAsStateWithLifecycle()
 
                 androidx.compose.foundation.layout.Column(
