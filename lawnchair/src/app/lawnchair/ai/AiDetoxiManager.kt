@@ -51,11 +51,11 @@ class AiDetoxiManager private constructor(private val context: Context) {
     companion object {
         private const val TAG = "AiDetoxiManager"
         @Volatile
-        private var INSTANCE: AiDetoxiManager? = null
+        private var instance: AiDetoxiManager? = null
 
         fun getInstance(context: Context): AiDetoxiManager {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: AiDetoxiManager(context.applicationContext).also { INSTANCE = it }
+            return instance ?: synchronized(this) {
+                instance ?: AiDetoxiManager(context.applicationContext).also { instance = it }
             }
         }
     }
