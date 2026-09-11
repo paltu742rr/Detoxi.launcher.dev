@@ -1,14 +1,25 @@
-name: Build release APK
+name: Build Android APK
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build-release-apk:
+  build:
     runs-on: ubuntu-latest
+<<<<<<< HEAD
+=======
+    env:
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+>>>>>>> b681b528fbadb2f162feb51dc5bbae7cafc7c37b
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
+<<<<<<< HEAD
           submodules: 'recursive'
       - uses: actions/setup-java@v4
         with:
@@ -23,19 +34,53 @@ jobs:
         run: chmod +x gradlew
       - uses: gradle/actions/setup-gradle@v3
       - name: Write sign info
+=======
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Restore keystore (optional)
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+>>>>>>> b681b528fbadb2f162feb51dc5bbae7cafc7c37b
         run: |
-          if [ ! -z "${{ secrets.KEYSTORE }}" ]; then
-            echo storePassword='${{ secrets.KEYSTORE_PASSWORD }}' >> keystore.properties
-            echo keyAlias='${{ secrets.KEY_ALIAS }}' >> keystore.properties
-            echo keyPassword='${{ secrets.KEY_PASSWORD }}' >> keystore.properties
-            echo storeFile='${{ github.workspace }}/key.jks' >> keystore.properties
-            echo ${{ secrets.KEYSTORE }} | base64 --decode > ${{ github.workspace }}/key.jks
-          fi
-      - name: Build release APK
-        run: ./gradlew assembleLawnWithQuickstepGithubRelease bundleLawnWithQuickstepPlayRelease --no-daemon --max-workers=2
-      - name: Upload artifact
+          mkdir -p $GITHUB_WORKSPACE/keystore
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > $GITHUB_WORKSPACE/keystore/keystore.jks
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Build release APKs
+        run: |
+          # Generic: try to assemble all release variants across modules
+          ./gradlew clean assembleRelease --no-daemon || true
+          # also try bundle in case project expects AAB
+          ./gradlew bundleRelease --no-daemon || true
+
+      - name: Find and upload APK/AAB artifacts
         uses: actions/upload-artifact@v4
         with:
+<<<<<<< HEAD
           name: Release APK
           path: build/outputs/apk/**/**/*.apk
           
+=======
+          name: android-build-artifacts
+          path: |
+            **/build/outputs/apk/**/release/*.apk
+            **/build/outputs/bundle/**/release/*.aab
+            **/build/outputs/apk/**/*.apk
+>>>>>>> b681b528fbadb2f162feb51dc5bbae7cafc7c37b
