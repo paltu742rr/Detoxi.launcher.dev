@@ -29,12 +29,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: 'recursive'
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 21
       - uses: android-actions/setup-android@v3
+      - name: Install Android SDK Components
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-37" "build-tools;37.0.0"
       - name: Make gradlew executable
         run: chmod +x gradlew
       - uses: gradle/actions/setup-gradle@v3
@@ -103,13 +107,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install gitpython requests
-      - name: Publish Telegram update post
-        run: python ci.py
+      - name: Publish Python packages & notify
+        run: |
+          # notification script if needed
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
           ARTIFACT_DIRECTORY: artifacts/release-apk
           TELEGRAM_NEWS_CHANNEL_ID: ${{ secrets.TELEGRAM_NEWS_CHANNEL_ID }}
           ACTION: update_announcement
+
 
 
 
