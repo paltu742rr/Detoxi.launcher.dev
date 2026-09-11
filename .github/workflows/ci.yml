@@ -53,7 +53,7 @@ jobs:
       - name: Install Android SDK Components
         run: |
           yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-37" "build-tools;37.0.0"
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Make gradlew executable
         run: chmod +x gradlew
       - uses: gradle/actions/setup-gradle@v3
