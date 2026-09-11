@@ -6,16 +6,19 @@ on:
 jobs:
   build-release-apk:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: 'recursive'
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 21
       - uses: android-actions/setup-android@v3
+      - name: Install Android SDK Components
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-37" "build-tools;37.0.0"
       - name: Make gradlew executable
         run: chmod +x gradlew
       - uses: gradle/actions/setup-gradle@v3
@@ -35,8 +38,4 @@ jobs:
         with:
           name: Release APK
           path: build/outputs/apk/**/**/*.apk
-
-
-
-
           
