@@ -19,21 +19,22 @@ package app.lawnchair.ai
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import java.io.File
+import java.io.FileOutputStream
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 
 class AiDetoxiManager private constructor(private val context: Context) {
 
@@ -50,6 +51,7 @@ class AiDetoxiManager private constructor(private val context: Context) {
 
     companion object {
         private const val TAG = "AiDetoxiManager"
+
         @Volatile
         private var instance: AiDetoxiManager? = null
 
@@ -70,18 +72,25 @@ class AiDetoxiManager private constructor(private val context: Context) {
         }
 
     var endpointUrl: String
-        get() = prefs.getString("ai_detoxi_endpoint", "https://api.cloudflare.com/client/v4/accounts/77ac2d21a01a5f50ff8d487ed477d639/ai/run/") ?: "https://api.cloudflare.com/client/v4/accounts/77ac2d21a01a5f50ff8d487ed477d639/ai/run/"
+        get() = prefs.getString(
+            "ai_detoxi_endpoint",
+            "https://api.cloudflare.com/client/v4/accounts/77ac2d21a01a5f50ff8d487ed477d639/ai/run/",
+        ) ?: "https://api.cloudflare.com/client/v4/accounts/77ac2d21a01a5f50ff8d487ed477d639/ai/run/"
         set(value) = prefs.edit().putString("ai_detoxi_endpoint", value).apply()
 
     var apiKey: String
-        get() = prefs.getString("ai_detoxi_apikey", "cfut_gvoTLkkxDZjO8I4zaAvX3C5NSEoS2FYCZwEniQ1za8536415") ?: "cfut_gvoTLkkxDZjO8I4zaAvX3C5NSEoS2FYCZwEniQ1za8536415"
+        get() = prefs.getString(
+            "ai_detoxi_apikey",
+            "cfut_gvoTLkkxDZjO8I4zaAvX3C5NSEoS2FYCZwEniQ1za8536415",
+        ) ?: "cfut_gvoTLkkxDZjO8I4zaAvX3C5NSEoS2FYCZwEniQ1za8536415"
         set(value) = prefs.edit().putString("ai_detoxi_apikey", value).apply()
 
     var modelName: String
-        get() = prefs.getString("ai_detoxi_model", "@cf/meta/llama-3.1-8b-instruct") ?: "@cf/meta/llama-3.1-8b-instruct"
+        get() = prefs.getString("ai_detoxi_model", "@cf/meta/llama-3.1-8b-instruct")
+            ?: "@cf/meta/llama-3.1-8b-instruct"
         set(value) = prefs.edit().putString("ai_detoxi_model", value).apply()
 
-    val progressState = kotlinx.coroutines.flow.MutableStateFlow(Triple(0, 0, ""))
+    val progressState = MutableStateFlow(Triple(0, 0, ""))
 
 
     fun queueIcon(packageName: String, bitmap: Bitmap) {
@@ -132,7 +141,7 @@ class AiDetoxiManager private constructor(private val context: Context) {
         }
     }
 
-    private suspend fun processWithCloudflareAi(packageName: String, bitmap: Bitmap) {
+    private fun processWithCloudflareAi(packageName: String, bitmap: Bitmap) {
         val url = endpointUrl + modelName
         val jsonBody = JSONObject().apply {
             put("prompt", "Generate clean minimalist vector glyph representation icon description for app $packageName")
@@ -147,7 +156,7 @@ class AiDetoxiManager private constructor(private val context: Context) {
             .build()
 
         try {
-            client.newCall(request).execute().use { response ->
+            client.newCall(request).execute().use { _ ->
                 val cacheFile = File(context.cacheDir, "ai_detoxi_$packageName.png")
                 FileOutputStream(cacheFile).use { out ->
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
