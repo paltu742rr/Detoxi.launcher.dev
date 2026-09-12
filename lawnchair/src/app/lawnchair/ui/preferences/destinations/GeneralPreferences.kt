@@ -16,6 +16,7 @@
 
 package app.lawnchair.ui.preferences.destinations
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,8 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.lawnchair.ai.AiDetoxiManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.lawnchair.ai.AiDetoxiManager
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
@@ -189,15 +190,15 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                 var apiKey by remember { mutableStateOf(aiManager.apiKey) }
                 val progress by aiManager.progressState.collectAsStateWithLifecycle()
 
-                androidx.compose.foundation.layout.Column(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(16.dp),
                 ) {
                     Text(
                         text = "AI-Powered Minimalist Icon Engine",
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -208,7 +209,7 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                         onCheckedChange = {
                             isAiEnabled = it
                             aiManager.isEnabled = it
-                        }
+                        },
                     )
 
                     if (isAiEnabled) {
@@ -220,7 +221,7 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                                 aiManager.endpointUrl = it
                             },
                             label = { Text("Cloudflare Endpoint URL") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
@@ -230,19 +231,20 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
                                 aiManager.apiKey = it
                             },
                             label = { Text("Cloudflare API Token") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         )
 
                         if (progress.second > 0) {
+                            val progressFraction = progress.first.toFloat() / progress.second.toFloat()
                             Spacer(modifier = Modifier.height(12.dp))
                             LinearProgressIndicator(
-                                progress = { progress.first.toFloat() / progress.second.toFloat() },
-                                modifier = Modifier.fillMaxWidth()
+                                progress = progressFraction,
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodySmall,
                             )
                         }
                     }
