@@ -92,7 +92,6 @@ class AiDetoxiManager private constructor(private val context: Context) {
 
     val progressState = MutableStateFlow(Triple(0, 0, ""))
 
-
     fun queueIcon(packageName: String, bitmap: Bitmap) {
         if (!isEnabled) return
         val cacheFile = File(context.cacheDir, "ai_detoxi_$packageName.png")

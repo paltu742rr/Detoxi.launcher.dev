@@ -22,11 +22,15 @@ plugins {
 allprojects {
     plugins.withType(AndroidBasePlugin).configureEach {
         android {
-            buildToolsVersion "35.0.0"
-            compileSdk 35
+            buildToolsVersion "37.0.0"
+            compileSdk {
+                version = release(37) {
+                    minorApiLevel = 1
+                }
+            }
             defaultConfig {
                 minSdk = 26
-                targetSdk = 35
+                targetSdk = 37
                 vectorDrawables.useSupportLibrary = true
             }
             lint {

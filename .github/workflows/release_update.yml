@@ -35,10 +35,9 @@ jobs:
           distribution: 'zulu'
           java-version: 21
       - uses: android-actions/setup-android@v3
-      - name: Install Android SDK Components
+      - name: Accept Android SDK Licenses
         run: |
           yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-37" "build-tools;37.0.0"
       - name: Make gradlew executable
         run: chmod +x gradlew
       - uses: gradle/actions/setup-gradle@v3
