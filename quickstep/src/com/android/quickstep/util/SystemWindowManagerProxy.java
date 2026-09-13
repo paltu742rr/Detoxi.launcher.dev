@@ -36,7 +36,6 @@ import com.android.launcher3.util.window.CachedDisplayInfo;
 import com.android.launcher3.util.window.WindowManagerProxy;
 import com.android.quickstep.SystemUiProxy;
 import com.android.quickstep.fallback.window.RecentsWindowFlags;
-import com.android.wm.shell.shared.desktopmode.DesktopModeStatus;
 import com.android.wm.shell.shared.desktopmode.DesktopState;
 
 import java.util.Collections;
@@ -96,10 +95,11 @@ public class SystemWindowManagerProxy extends WindowManagerProxy {
 
     @Override
     public boolean showLockedTaskbarOnHome(Context displayInfoContext) {
-        if (!DesktopModeStatus.canEnterDesktopMode(displayInfoContext)) {
+        DesktopState desktopState = DesktopState.fromContext(displayInfoContext);
+        if (!desktopState.canEnterDesktopMode()) {
             return false;
         }
-        if (!DesktopModeStatus.enterDesktopByDefaultOnFreeformDisplay(displayInfoContext)) {
+        if (!desktopState.enterDesktopByDefaultOnFreeformDisplay()) {
             return false;
         }
 
@@ -108,11 +108,12 @@ public class SystemWindowManagerProxy extends WindowManagerProxy {
 
     @Override
     public boolean showDesktopTaskbarForFreeformDisplay(Context displayInfoContext) {
-        if (!DesktopModeStatus.canEnterDesktopMode(displayInfoContext)) {
+        DesktopState desktopState = DesktopState.fromContext(displayInfoContext);
+        if (!desktopState.canEnterDesktopMode()) {
             return false;
         }
 
-        if (!DesktopModeStatus.enterDesktopByDefaultOnFreeformDisplay(displayInfoContext)) {
+        if (!desktopState.enterDesktopByDefaultOnFreeformDisplay()) {
             return false;
         }
 
