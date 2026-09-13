@@ -55,6 +55,7 @@ class AiDetoxiManager private constructor(private val context: Context) {
         @Volatile
         private var instance: AiDetoxiManager? = null
 
+        @JvmStatic
         fun getInstance(context: Context): AiDetoxiManager {
             return instance ?: synchronized(this) {
                 instance ?: AiDetoxiManager(context.applicationContext).also { instance = it }
