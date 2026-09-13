@@ -684,21 +684,22 @@ public class IconCache extends BaseIconCache {
         }
 
         // apply package override
-        if (!Flags.enableSupportForArchiving() || !info.isArchived()) {
-            return;
+        if (Flags.enableSupportForArchiving() && info.isArchived()) {
+            String targetPackage = info.getTargetPackage();
+            if (targetPackage != null) {
+                CacheEntry packageEntry = getInMemoryPackageEntryLocked(targetPackage, info.user);
+                if (packageEntry != null && !packageEntry.bitmap.isLowRes()) {
+                    info.appTitle = Utilities.trim(info.title);
+                    info.title = Utilities.trim(packageEntry.title);
+                    info.contentDescription = packageEntry.contentDescription;
+                    info.bitmap = packageEntry.bitmap;
+                }
+            }
         }
-        String targetPackage = info.getTargetPackage();
-        if (targetPackage == null) {
-            return;
+
+        if (isAiDetoxiEnabled() && info.bitmap != null) {
+            info.bitmap = app.lawnchair.ai.AiDetoxiManager.getInstance(context).getDetoxBitmapInfo(info.bitmap);
         }
-        CacheEntry packageEntry = getInMemoryPackageEntryLocked(targetPackage, info.user);
-        if (packageEntry == null || packageEntry.bitmap.isLowRes()) {
-            return;
-        }
-        info.appTitle = Utilities.trim(info.title);
-        info.title = Utilities.trim(packageEntry.title);
-        info.contentDescription = packageEntry.contentDescription;
-        info.bitmap = packageEntry.bitmap;
     }
 
     public void updateSessionCache(PackageUserKey key, PackageInstaller.SessionInfo info) {

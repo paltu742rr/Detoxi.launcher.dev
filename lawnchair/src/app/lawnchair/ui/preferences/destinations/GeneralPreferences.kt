@@ -16,15 +16,6 @@
 
 package app.lawnchair.ui.preferences.destinations
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.lawnchair.ai.AiDetoxiManager
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
+import app.lawnchair.preferences2.ReloadHelper
 import app.lawnchair.preferences2.asState
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.theme.color.ColorOption
@@ -181,73 +172,35 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
             )
 
             PreferenceGroup(
-                heading = "AI Detoxi Launcher Icon (Cloudflare Workers AI)",
-                description = "Automatically transforms icons into a clean minimalist style using Cloudflare Workers AI with 50 RPM batch rate-limit queueing.",
+                heading = "Minimalist Detox Icons",
+                description = "Hardware-accelerated on-device icon styling for a distraction-free, minimalist launcher experience.",
             ) {
                 val aiManager = remember { AiDetoxiManager.getInstance(context) }
                 var isAiEnabled by remember { mutableStateOf(aiManager.isEnabled) }
-                var endpoint by remember { mutableStateOf(aiManager.endpointUrl) }
-                var apiKey by remember { mutableStateOf(aiManager.apiKey) }
-                val progress by aiManager.progressState.collectAsStateWithLifecycle()
+                var selectedStyle by remember { mutableStateOf(aiManager.styleMode) }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text(
-                        text = "AI-Powered Minimalist Icon Engine",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                SwitchPreference(
+                    label = "Minimalist Detox Icons",
+                    description = "Converts distracting app icons into clean, minimalist monochrome or matte glyphs.",
+                    checked = isAiEnabled,
+                    onCheckedChange = {
+                        isAiEnabled = it
+                        aiManager.isEnabled = it
+                        ReloadHelper(context).reloadIcons()
+                    },
+                )
 
+                if (isAiEnabled) {
                     SwitchPreference(
-                        label = "AI Detoxi Launcher Icon",
-                        description = "Enable Cloudflare Workers AI icon generation for clean minimalist drawer apps.",
-                        checked = isAiEnabled,
+                        label = "Matte Detox Mode",
+                        description = "Desaturates bright addictive colors into a calming matte finish.",
+                        checked = selectedStyle == AiDetoxiManager.STYLE_MATTE_DETOX,
                         onCheckedChange = {
-                            isAiEnabled = it
-                            aiManager.isEnabled = it
+                            selectedStyle = if (it) AiDetoxiManager.STYLE_MATTE_DETOX else AiDetoxiManager.STYLE_MONOCHROME
+                            aiManager.styleMode = selectedStyle
+                            ReloadHelper(context).reloadIcons()
                         },
                     )
-
-                    if (isAiEnabled) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedTextField(
-                            value = endpoint,
-                            onValueChange = {
-                                endpoint = it
-                                aiManager.endpointUrl = it
-                            },
-                            label = { Text("Cloudflare Endpoint URL") },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = apiKey,
-                            onValueChange = {
-                                apiKey = it
-                                aiManager.apiKey = it
-                            },
-                            label = { Text("Cloudflare API Token") },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-
-                        if (progress.second > 0) {
-                            val progressFraction = progress.first.toFloat() / progress.second.toFloat()
-                            Spacer(modifier = Modifier.height(12.dp))
-                            LinearProgressIndicator(
-                                progress = progressFraction,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Processing icons: ${progress.first}/${progress.second} (Last: ${progress.third}) - 50 RPM Active Queue",
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
-                    }
                 }
             }
             SwitchPreference(
